@@ -1,20 +1,25 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
 function App() {
     const [helloMessage, setHelloMessage] = useState();
+    const fetchedRef = useRef(false);
 
-  useEffect(() => {
-      fetch('/api/hello')
-          .then(res => res.json())
-          .then(data => setHelloMessage(data.message))
-  }, []);
+    useEffect(() => {
+        if (fetchedRef.current) return;
+        fetchedRef.current = true;
 
-  return (
-      <div className="App">
-        <h1>React + NestJS</h1>
-          <p>{helloMessage}</p>
-      </div>
-  );
+        fetch('/api/hello')
+            .then(res => res.json())
+            .then(data => setHelloMessage(data.message))
+            .catch(console.error);
+    }, []);
+
+    return (
+        <div className="App">
+            <h1>React + NestJS</h1>
+            <p>{helloMessage}</p>
+        </div>
+    );
 }
 
 export default App;

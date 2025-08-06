@@ -15,11 +15,15 @@ export class AuthRepository {
     return this.userRepository.findOne({ where: { email } });
   }
 
-  async createUser(email: string, hashedPassword: string): Promise<User> {
+  async createUser(
+    email: string,
+    hashedPassword: string,
+    name: string,
+  ): Promise<User> {
     const user = this.userRepository.create({
       email,
       password: hashedPassword,
-      name: '',
+      name: name || '',
       role: 'user',
     });
     return this.userRepository.save(user);

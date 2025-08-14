@@ -1,37 +1,35 @@
 import React from 'react';
 import {useAuthForm} from "../hooks/useAuthForm";
-import {login, register} from "../services/authService";
+import { useAuth } from "../contexts/AuthContext";
 
 export default function AuthForm({mode = 'login', onSuccess}) {
-    const {formData, error, setUserName,  setError, handleChange} = useAuthForm({
+    const {formData, error,  setError, handleChange} = useAuthForm({
         email: '',
         password: '',
-        name: '',
     });
+    
+    const { login, register } = useAuth();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError(null);
 
-        if (mode === 'register' && !formData.name.trim()) {
-
-            setError('Name is required');
-            return;
-        }
-
         try {
-            const data = mode === 'login'
-                ? await login({email: formData.email, password: formData.password})
-                : await register({
+            let result;
+            if (mode === 'login') {
+                result = await login({email: formData.email, password: formData.password});
+            } else {
+                result = await register({
                     email: formData.email,
                     password: formData.password,
-                    name: formData.name.trim()
                 });
+            }
 
-            onSuccess?.({
-                ...data,
-                name: formData.name.trim()
-            });
+            if (result.success) {
+                onSuccess?.(result);
+            } else {
+                setError(result.error || 'Authentication failed');
+            }
         } catch (err) {
             console.error('Auth error:', err);
             setError(err.message || 'Authentication failed');
@@ -41,64 +39,46 @@ export default function AuthForm({mode = 'login', onSuccess}) {
     return (
         <form
             onSubmit={handleSubmit}
-            className="max-w-md mx-auto p-6 bg-white/30 backdrop-blur-md rounded-lg shadow-lg border border-white/30"
+            className="w-full space-y-8"
         >
-            <h2
-                className="
-                    text-5xl uppercase font-semibold text-center mt-2 mb-8
-                    bg-gradient-to-r from-white/70 via-white/30 to-white/70
-                    bg-clip-text text-purple-100
-                    drop-shadow-[0_0_6px_rgba(255,255,255,0.8)]
-                  "
-            >
-                {mode === 'login' ? 'Login' : 'Register'}
-            </h2>
+            <div className="space-y-2">
+                <label className="block text-sm font-semibold text-white/80 tracking-wide uppercase">Email</label>
+                <input
+                    type="email"
+                    name="email"
+                    required
+                    value={formData.email}
+                    onChange={handleChange}
+                    className="w-full px-6 py-4 bg-white/5 border border-white/20 rounded-2xl focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/40 transition-all duration-500 text-white placeholder-white/40 font-medium tracking-wide"
+                    placeholder="Enter your email"
+                />
+            </div>
 
-            <label className="block mb-2 text-sm font-semibold text-gray-800">Email</label>
-            <input
-                type="email"
-                name="email"
-                required
-                value={formData.email}
-                onChange={handleChange}
-                className="w-full px-4 py-3 mb-4 rounded-lg bg-white/70 border border-gray-300 focus:outline-none focus:ring-4 focus:ring-indigo-400 transition"
-            />
-
-            <label className="block mb-2 text-sm font-semibold text-gray-800">Password</label>
-            <input
-                type="password"
-                name="password"
-                required
-                minLength={6}
-                value={formData.password}
-                onChange={handleChange}
-                className="w-full px-4 py-3 mb-4 rounded-lg bg-white/70 border border-gray-300 focus:outline-none focus:ring-4 focus:ring-indigo-400 transition"
-            />
-
-            {mode === 'register' && (
-                <>
-                    <label className="block mb-2 text-sm font-semibold text-gray-800">Name</label>
-                    <input
-                        type="text"
-                        name="name"
-                        required
-                        minLength={1}
-                        value={formData.name}
-                        onChange={handleChange}
-                        className="w-full px-4 py-3 mb-4 rounded-lg bg-white/70 border border-gray-300 focus:outline-none focus:ring-4 focus:ring-indigo-400 transition"
-                    />
-                </>
-            )}
+            <div className="space-y-2">
+                <label className="block text-sm font-semibold text-white/80 tracking-wide uppercase">Password</label>
+                <input
+                    type="password"
+                    name="password"
+                    required
+                    minLength={6}
+                    value={formData.password}
+                    onChange={handleChange}
+                    className="w-full px-6 py-4 bg-white/5 border border-white/20 rounded-2xl focus:outline-none focus:ring-2 focus:ring-white/30 focus:border-white/40 transition-all duration-500 text-white placeholder-white/40 font-medium tracking-wide"
+                    placeholder="Enter your password"
+                />
+            </div>
 
             {error && (
-                <p className="text-red-600 mb-4 text-center font-semibold">{error}</p>
+                <div className="bg-red-500/10 border border-red-500/30 rounded-2xl p-4 backdrop-blur-sm">
+                    <p className="text-red-300 text-center font-medium tracking-wide">{error}</p>
+                </div>
             )}
 
             <button
                 type="submit"
-                className="w-full py-3 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg font-semibold shadow-md transition-colors duration-300"
+                className="w-full py-4 bg-white text-black rounded-2xl font-black text-lg tracking-wide shadow-2xl hover:shadow-white/20 transition-all duration-500 hover:bg-white/90 border border-white/20"
             >
-                {mode === 'login' ? 'Login' : 'Register'}
+                {mode === 'login' ? 'Sign In' : 'Create Account'}
             </button>
         </form>
     );

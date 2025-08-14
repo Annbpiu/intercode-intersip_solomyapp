@@ -1,5 +1,6 @@
 import {useEffect, useState} from 'react';
-import { getToken, removeToken, saveToken, getUserName, saveUserName, removeUserName } from "../services/authStorageService.ts";
+import { getToken, removeToken, saveToken, getUserEmail, saveUserEmail, removeUserEmail } from "../services/authStorageService.ts";
+
 export function useAuthForm(initialData) {
     const [formData, setFormData] = useState(initialData);
     const [error, setError] = useState(null);
@@ -13,39 +14,39 @@ export function useAuthForm(initialData) {
 
 export function useAuth() {
     const [token, setToken] = useState(null);
-    const [userName, setUserName] = useState(null);
+    const [userEmail, setUserEmail] = useState(null);
 
     useEffect(() => {
         const savedToken = getToken();
-        const savedName = getUserName();
+        const savedEmail = getUserEmail();
 
         if (savedToken) {
             setToken(savedToken);
-            if (savedName) {
-                setUserName(savedName);
+            if (savedEmail) {
+                setUserEmail(savedEmail);
             }
         }
     }, []);
 
-    const login = (token: string, name?: string) => {
+    const login = (token, email) => {
         saveToken(token);
         setToken(token);
 
-        if (name) {
-            saveUserName(name);
-            setUserName(name);
+        if (email) {
+            saveUserEmail(email);
+            setUserEmail(email);
         } else {
-            const savedName = getUserName();
-            if (savedName) setUserName(savedName);
+            const savedEmail = getUserEmail();
+            if (savedEmail) setUserEmail(savedEmail);
         }
     };
 
     const logout = () => {
         removeToken();
-        removeUserName();
+        removeUserEmail();
         setToken(null);
-        setUserName(null);
+        setUserEmail(null);
     };
 
-    return { token, userName, setUserName, login, logout };
+    return { token, userEmail, setUserEmail, login, logout };
 }

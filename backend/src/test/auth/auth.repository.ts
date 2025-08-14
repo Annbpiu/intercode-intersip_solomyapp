@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
-import { User } from '../test/user/user.entity';
+import { User } from '../user/user.entity';
 import { InjectDataSource } from '@nestjs/typeorm';
 
 @Injectable()
@@ -18,13 +18,10 @@ export class AuthRepository {
   async createUser(
     email: string,
     hashedPassword: string,
-    name: string,
   ): Promise<User> {
     const user = this.userRepository.create({
       email,
       password: hashedPassword,
-      name: name || '',
-      role: 'user',
     });
     return this.userRepository.save(user);
   }

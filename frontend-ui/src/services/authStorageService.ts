@@ -10,14 +10,14 @@ export const removeToken = () => {
     localStorage.removeItem('access_token');
 };
 
-export const saveUserName = (name: string) => {
-    localStorage.setItem('userName', name);
+export const saveUserEmail = (email: string) => {
+    localStorage.setItem('userEmail', email);
 };
 
-export const getUserName = (): string | null => {
-    return localStorage.getItem('userName');
+export const getUserEmail = (): string | null => {
+    return localStorage.getItem('userEmail');
 };
 
-export const removeUserName = () => {
-    localStorage.removeItem('userName');
+export const removeUserEmail = () => {
+    localStorage.removeItem('userEmail');
 };

@@ -6,9 +6,11 @@ async function debugSeeding() {
   let app;
   
   try {
-    console.log('🔍 Debugging seeding issues...');
+    console.log('🔍 Debugging seeding issues...');
+
     app = await NestFactory.createApplicationContext(AppModule);
-    console.log('✅ App context created');
+    console.log('✅ App context created');
+
     console.log('\n📋 Available providers:');
     try {
       const providers = app.get('APP_INTERCEPTOR');
@@ -22,7 +24,8 @@ async function debugSeeding() {
       console.log('  - APP_FILTER: Found');
     } catch (error) {
       console.log('  - APP_FILTER: Not found');
-    }
+    }
+
     console.log('\n🔧 Testing basic services:');
     
     try {
@@ -38,11 +41,13 @@ async function debugSeeding() {
     } catch (error) {
       console.log('  - SeedRecipesService: Not found');
       console.log(`    Error: ${error.message}`);
-    }
+    }
+
     console.log('\n📁 Module structure:');
     try {
       const moduleRef = app.get('ModuleRef');
-      console.log('  - ModuleRef: Found');
+      console.log('  - ModuleRef: Found');
+
       const modules = app.get('ModuleRef');
       console.log('  - ModuleRef details: Available');
     } catch (error) {
@@ -61,8 +66,10 @@ async function debugSeeding() {
       await app.close();
     }
   }
-}
+}
+
 debugSeeding();
+
 
 
 
